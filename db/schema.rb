@@ -10,30 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_24_015022) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_24_033056) do
   create_table "comments", force: :cascade do |t|
-    t.integer "post_id"
-    t.integer "user_id"
     t.text "body", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "post_id"
+    t.integer "user_id"
+    t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "posts", force: :cascade do |t|
-    t.integer "user_id"
     t.string "title", null: false
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
   create_table "tags", force: :cascade do |t|
-    t.integer "post_id", null: false
-    t.integer "user_id", null: false
     t.string "name", limit: 16, null: false
     t.integer "weight", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "post_id"
+    t.integer "user_id"
+    t.index ["post_id"], name: "index_tags_on_post_id"
+    t.index ["user_id"], name: "index_tags_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -43,4 +48,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_24_015022) do
     t.index ["name"], name: "index_users_on_name", unique: true
   end
 
+  add_foreign_key "comments", "posts"
+  add_foreign_key "comments", "users"
+  add_foreign_key "posts", "users"
+  add_foreign_key "tags", "posts"
+  add_foreign_key "tags", "users"
 end
