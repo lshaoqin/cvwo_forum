@@ -45,6 +45,9 @@ gem "bootsnap", require: false
 #Handle encryption of passwords
 gem "bcrypt"
 
+#Handle token verification
+gem "jwt"
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 
