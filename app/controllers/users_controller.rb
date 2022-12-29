@@ -6,13 +6,24 @@ class UsersController < ApplicationController
     def create 
         @user = User.create(user_params)
         if @user.save
-            redirect_to new_user_path
+            render json: @user, status: created
         else
-            render :new, status: :unprocessable_entity
+            render json: {errors: user.errors}, status :unprocessable_entity
         end
     end
 
     def user_params
         params.require(:user).permit(:name, :password)
     end
+
+    def index
+        users = User.all
+        render json: users
+    end
+
+    def login
+        //TODO: Add login method
+    end 
+
+    def 
 end
