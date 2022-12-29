@@ -22,7 +22,14 @@ class UsersController < ApplicationController
     end
 
     def login
-        //TODO: Add login method
+        user = User.find_by(name: params[:name])
+        if user&.authenticate(params[:password])
+            payload = {"name": user.name}
+            token = JWT.decode(payload, Rails.application.credentials.jwt_secret)
+            render json: {token: token}
+        else
+            render json: { error: 'Invalid email or password' }, status: :unauthorized
+        end
     end 
 
     def 
