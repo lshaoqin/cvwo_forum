@@ -25,7 +25,7 @@ class UsersController < ApplicationController
         user = User.find_by(name: params[:name])
         if user&.authenticate(params[:password])
             payload = {"name": user.name}
-            token = JWT.decode(payload, Rails.application.credentials.jwt_secret)
+            token = JWT.encode(payload, Rails.application.credentials.secret_key)
             render json: {token: token}
         else
             render json: { error: 'Invalid email or password' }, status: :unauthorized
