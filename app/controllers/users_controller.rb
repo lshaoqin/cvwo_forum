@@ -6,9 +6,9 @@ class UsersController < ApplicationController
     def create 
         @user = User.create(user_params)
         if @user.save
-            render json: @user, status: created
+            render json: @user, status: :created
         else
-            render json: {errors: user.errors}, status :unprocessable_entity
+            render json: {errors: user.errors}, status: :unprocessable_entity
         end
     end
 
@@ -30,7 +30,7 @@ class UsersController < ApplicationController
         else
             render json: { error: 'Invalid email or password' }, status: :unauthorized
         end
-    end 
+    end
 
-    def 
+    
 end
