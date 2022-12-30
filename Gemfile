@@ -48,6 +48,9 @@ gem "bcrypt"
 #Handle token verification
 gem "jwt"
 
+#Allow cross-origin requests
+gem "rack-cors"
+
 # Use Sass to process CSS
 # gem "sassc-rails"
 
