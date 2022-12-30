@@ -4,7 +4,7 @@ class UsersController < ApplicationController
     end
 
     def create 
-        @user = User.create(user_params)
+        @user = User.create(name: params[:name], password: params[:password])
         if @user.save
             render json: @user, status: :created
         else
