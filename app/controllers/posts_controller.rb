@@ -5,7 +5,19 @@ class PostsController < ApplicationController
 
   def index
     posts = Post.all
-    render json: posts
+  
+    processed_posts = posts.map do |post|
+      # Replace user_id with corresponding author
+      author = post.user.name
+      # Append tags of post
+      tags = post.tags
+      post_json = post.as_json
+      post_json['author'] = author
+      post_json['tags'] = tags
+      post_json
+    end
+  
+    render json: processed_posts
   end
 
   def create
