@@ -23,12 +23,13 @@ class PostsController < ApplicationController
   def create
     #First, check if a valid user_id token was supplied
     begin 
-      decoded_id = JWT.decode!(params[:token], Rails.application.credentials.secret_key).payload
+      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key)
+      puts(decoded_id)
     rescue JWT::VerificationError
       render json: {errors: "Invalid user token"}
     end
     #Create post if token was valid
-    @post = Post.create(title: params[:title], body: params[:body], user_id: decoded_id[:user_id])
+    @post = Post.create(title: params[:title], body: params[:body], user_id: decoded_id[:id])
       if @post.save
           render json: @post, status: :created
       else
