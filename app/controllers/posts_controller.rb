@@ -31,6 +31,7 @@ class PostsController < ApplicationController
     #Create post if token was valid
     @post = Post.create(title: params[:title], body: params[:body], user_id: decoded_id[0]['id'])
       if @post.save
+          #Save each tag as well
           tags = params[:tags]
           tags.each do |name|
             newTag = Tag.create(name: name, weight: 5, post_id:@post.id, user_id: decoded_id[0]['id'])
@@ -40,6 +41,10 @@ class PostsController < ApplicationController
       else
           render json: {errors: post.errors}, status: :unprocessable_entity
       end
+  end
+
+  def count
+    render json: Post.count
   end
 
   def edit
