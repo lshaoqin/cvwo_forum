@@ -24,7 +24,6 @@ class PostsController < ApplicationController
     #First, check if a valid user_id token was supplied
     begin 
       decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)
-      puts(decoded_id)
     rescue JWT::VerificationError
       render json: {errors: "Invalid user token"}
     end
@@ -55,6 +54,21 @@ class PostsController < ApplicationController
     else
       begin
         tags = post.tags
+        #If tag was upvoted/downvoted by user, return user_id as 1. Else, return user_id as 0.
+        if (params[:token])
+          decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)[0]['id']
+          tags.each do |tag|
+            if (tag[:user_id] == decoded_id)
+              tag[:user_id] = 1
+            else
+              tag[:user_id] = 0
+            end
+          end
+        else
+          tags.each do |tag|
+            tag[:user_id] = 0
+          end
+        end
       rescue
         render 'Error loading post content', status: :unprocessable_entity
       else
