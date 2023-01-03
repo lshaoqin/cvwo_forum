@@ -47,6 +47,23 @@ class PostsController < ApplicationController
     render json: Post.count
   end
 
+  def get_by_id
+    begin
+      post = Post.find(params[:id])
+    rescue
+      render 'Post not found', status: 404
+    else
+      begin
+        tags = post.tags
+      rescue
+        render 'Error loading post content', status: :unprocessable_entity
+      else
+        render json: { :post => post, :tags => tags }, status: :created 
+      end
+    end
+  end
+      
+
   def edit
   end
 end
