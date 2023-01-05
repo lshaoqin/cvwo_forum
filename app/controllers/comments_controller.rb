@@ -26,11 +26,12 @@ class CommentsController < ApplicationController
     end
     #Create comment if token was valid
     @comment = Comment.create(body: params[:body], post_id: params[:post_id], user_id: decoded_id[0]['id'])
-        if @comment.save
-            render json: @comment, status: :created
-        else
-            render json: {errors: comment.errors}, status: :unprocessable_entity
-        end
+    if @comment.save
+        #Pass back updated list of comments to client
+        fetch()
+    else
+        render json: {errors: comment.errors}, status: :unprocessable_entity
+    end
   end
 
   def edit
