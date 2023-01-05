@@ -5,8 +5,16 @@ class CommentsController < ApplicationController
 
     # Query the comments where the post_id matches the given post_id
     comments = Comment.where(post_id: post_id)
+    processed_comments = comments.map do |comment|
+      # Replace user_id with corresponding author
+      author = comment.user.name
+      comment_json = comment.as_json
+      comment_json['author'] = author
+      comment_json = comment_json.except(:user_id)
+      comment_json
+    end
 
-    render json: comments
+    render json: processed_comments
   end
 
   def new
