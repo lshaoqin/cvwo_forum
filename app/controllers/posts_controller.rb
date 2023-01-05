@@ -14,6 +14,7 @@ class PostsController < ApplicationController
       post_json = post.as_json
       post_json['author'] = author
       post_json['tags'] = tags
+      post_json = post_json.except(:user_id)
       post_json
     end
   
