@@ -25,6 +25,22 @@ class TagsController < ApplicationController
         else
             render json: {errors: tag.errors}, status: :unprocessable_entity
         end
+    end
 
+    def revoke
+        name = params[:name]
+        decoded_id = JWT.decode(params[:token], 
+                                Rails.application.credentials.secret_key, 
+                                true)[0]['id']
+        post_id = params[:post_id]
+        current_vote = Tag.find_by(name: name, 
+            user_id: decoded_id
+            post_id: post_id)
+
+        if current_vote.destroy
+            render status: 200
+        else
+            render json: {errors: tag.errors}, status: :unprocessable_entity
+        end
     end
 end

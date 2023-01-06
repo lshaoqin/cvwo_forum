@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   post '/users/create', to: 'users#create'
 
   post '/tags/new', to: 'tags#new'
+  post '/tags/revoke' to: 'tags#revoke'
    # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   # Defines the root path route ("/")
   # root "articles#index"
