@@ -6,7 +6,7 @@ class UsersController < ApplicationController
     def create 
         @user = User.create(name: params[:name], password: params[:password])
         if @user.save
-            render json: @user, status: :created
+            login()
         else
             render json: {errors: user.errors}, status: :unprocessable_entity
         end
@@ -26,7 +26,7 @@ class UsersController < ApplicationController
         if user&.authenticate(params[:password])
             payload = {"id": user.id}
             token = JWT.encode(payload, Rails.application.credentials.secret_key)
-            render json: {token: token}
+            render json: {token: token, username: user.name}
         else
             render json: { error: 'Invalid email or password' }, status: :unauthorized
         end
