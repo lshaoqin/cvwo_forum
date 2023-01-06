@@ -73,7 +73,12 @@ class PostsController < ApplicationController
       rescue
         render 'Error loading post content', status: :unprocessable_entity
       else
-        render json: { :post => post, :tags => tags }, status: :created 
+        #Return author name instead of user_id
+        author = post.user.name
+        post_json = post.as_json
+        post_json['author'] = author
+        post_json = post_json.except(:user_id)
+        render json: { :post => post_json, :tags => tags }, status: :created 
       end
     end
   end
