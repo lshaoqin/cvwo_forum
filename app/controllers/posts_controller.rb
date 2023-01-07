@@ -4,21 +4,60 @@ class PostsController < ApplicationController
   end
 
   def index
-    posts = Post.all
-  
-    processed_posts = posts.map do |post|
-      # Replace user_id with corresponding author
-      author = post.user.name
-      # Append tags of post
-      tags = post.tags
-      post_json = post.as_json
-      post_json['author'] = author
-      post_json['tags'] = tags
-      post_json = post_json.except(:user_id)
-      post_json
+    posts = Post.where("created_at > ?", params[:posts_after])
+    
+    #Count number of votes of targetTag in post
+    def count_tag(post, targetTag) 
+      tags = post.tags.filter {|tag| tag.name == targetTag}
+      count = 0
+      tags.each do |tag|
+        count += tag.weight
+      end
+      count
     end
-  
-    render json: processed_posts
+      
+    if (params[:filter_by_tag]) 
+      targetTag = params[:filter_by_tag]
+      scored_posts = posts.map do |post|
+        #return pairs of [(data of post), (score of corresponding tag)]
+        pair = [post, count_tag(post, targetTag)]
+        pair
+      end
+      #Filter out posts where score of corresponding tag is less than 0
+      scored_posts = scored_posts.filter {|pair| pair[1] >= 0}
+      if (params[:sort_by] == 'votes')
+        #Negate value to sort in descending order
+        scored_posts = scored_posts.sort_by {|pair| -pair[1]}
+      end
+
+      if (params[:sort_by == 'date'])
+        scored_posts = scored_posts.sort_by {|pair| -(pair[0].created_at)}
+      end
+
+      scored_posts = scored_posts.map do |pair|
+        # Replace user_id with corresponding author
+        author = pair[0].user.name
+        score = pair[1]
+        post_json = pair[0].as_json
+        post_json['author'] = author
+        post_json['score'] = score
+        post_json = post_json.except(:user_id)
+        post_json
+      end
+
+      render json: scored_posts, status: :success
+
+    else
+      processed_posts = posts.map do |post|
+        # Replace user_id with corresponding author
+        author = post.user.name
+        post_json = post.as_json
+        post_json['author'] = author
+        post_json = post_json.except(:user_id)
+        post_json
+      end
+      render json: processed_posts, status: 200
+    end
   end
 
   def create
@@ -37,7 +76,7 @@ class PostsController < ApplicationController
             newTag = Tag.create(name: name, weight: 5, post_id:@post.id, user_id: decoded_id[0]['id'])
             newTag.save
           end
-          render json: @post, status: :created
+          render json: @post, status: 200
       else
           render json: {errors: post.errors}, status: :unprocessable_entity
       end
