@@ -48,6 +48,9 @@ class PostsController < ApplicationController
       render json: scored_posts, status: 200
 
     else
+      if (params[:sort_by] == 'date')
+        posts = posts.sort_by {|post| (post.created_at)}.reverse
+      end
       processed_posts = posts.map do |post|
         # Replace user_id with corresponding author
         author = post.user.name
