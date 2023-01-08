@@ -26,12 +26,12 @@ class PostsController < ApplicationController
       #Filter out posts where score of corresponding tag is less than 1
       scored_posts = scored_posts.filter {|pair| pair[1] > 0}
       if (params[:sort_by] == 'votes')
-        #Negate value to sort in descending order
-        scored_posts = scored_posts.sort_by {|pair| -pair[1]}
+        #Reverse array to sort in descending order
+        scored_posts = scored_posts.sort_by {|pair| pair[1]}.reverse
       end
 
-      if (params[:sort_by == 'date'])
-        scored_posts = scored_posts.sort_by {|pair| -(pair[0].created_at)}
+      if (params[:sort_by] == 'date')
+        scored_posts = scored_posts.sort_by {|pair| (pair[0].created_at)}.reverse
       end
 
       scored_posts = scored_posts.map do |pair|
@@ -41,7 +41,7 @@ class PostsController < ApplicationController
         post_json = pair[0].as_json
         post_json['author'] = author
         post_json['score'] = score
-        post_json = post_json.except(:user_id)
+        post_json = post_json.except('user_id')
         post_json
       end
 
