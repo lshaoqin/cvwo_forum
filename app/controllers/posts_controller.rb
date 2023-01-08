@@ -66,17 +66,17 @@ class PostsController < ApplicationController
   def create
     #First, check if a valid user_id token was supplied
     begin 
-      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)
+      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)[0]['id']
     rescue JWT::VerificationError
       render json: {errors: "Invalid user token"}
     end
     #Create post if token was valid
-    @post = Post.create(title: params[:title], body: params[:body], user_id: decoded_id[0]['id'])
+    @post = Post.create(title: params[:title], body: params[:body], user_id: decoded_id)
       if @post.save
           #Save each tag as well
           tags = params[:tags]
           tags.each do |name|
-            newTag = Tag.create(name: name, weight: 5, post_id:@post.id, user_id: decoded_id[0]['id'])
+            newTag = Tag.create(name: name, weight: 5, post_id:@post.id, user_id: decoded_id)
             newTag.save
           end
           render json: @post, status: 200
@@ -127,5 +127,29 @@ class PostsController < ApplicationController
       
 
   def edit
+    #First, check if a valid user_id token was supplied
+    begin 
+      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)[0]['id']
+    rescue JWT::VerificationError
+      render json: {errors: "Invalid user token - try logging out and in again"}
+    end
+
+    @post = Post.find(params[:id])
+    #Check if post belongs to the user
+    if (@post.user_id != decoded_id)
+      render json: {errors: "User token mismatch - try logging out and in again"}
+    else
+      @post.assign_attributes(title: params[:title], body: params[:body])
+      if @post.save
+        #Return author name instead of user_id
+        author = @post.user.name
+        post_json = @post.as_json
+        post_json['author'] = author
+        post_json = post_json.except(:user_id)
+        render json: post_json, status: 200
+      else
+        render json: {errors: post.errors}, status: :unprocessable_entity
+      end
+    end
   end
 end
