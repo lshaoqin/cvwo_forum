@@ -23,8 +23,8 @@ class PostsController < ApplicationController
         pair = [post, count_tag(post, targetTag)]
         pair
       end
-      #Filter out posts where score of corresponding tag is less than 0
-      scored_posts = scored_posts.filter {|pair| pair[1] >= 0}
+      #Filter out posts where score of corresponding tag is less than 1
+      scored_posts = scored_posts.filter {|pair| pair[1] > 0}
       if (params[:sort_by] == 'votes')
         #Negate value to sort in descending order
         scored_posts = scored_posts.sort_by {|pair| -pair[1]}
@@ -45,7 +45,7 @@ class PostsController < ApplicationController
         post_json
       end
 
-      render json: scored_posts, status: :success
+      render json: scored_posts, status: 200
 
     else
       processed_posts = posts.map do |post|
