@@ -20,12 +20,12 @@ class CommentsController < ApplicationController
   def new
     #First, check if a valid user_id token was supplied
     begin 
-      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)
+      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)[0]['id']
     rescue JWT::VerificationError
       render json: {errors: "Invalid user token"}
     end
     #Create comment if token was valid
-    @comment = Comment.create(body: params[:body], post_id: params[:post_id], user_id: decoded_id[0]['id'])
+    @comment = Comment.create(body: params[:body], post_id: params[:post_id], user_id: decoded_id)
     if @comment.save
         #Pass back updated list of comments to client
         fetch()
@@ -35,6 +35,27 @@ class CommentsController < ApplicationController
   end
 
   def edit
+    #First, check if a valid user_id token was supplied
+    begin 
+      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)[0]['id']
+    rescue JWT::VerificationError
+      render json: {errors: "Invalid user token"}
+    end
+
+    @comment = Comment.find(params[:id])
+    if @comment.user_id == decoded_id
+      if @comment.update_column(:body, params[:body])
+        author = @comment.user.name
+        comment_json = @comment.as_json
+        comment_json['author'] = author
+        comment_json = comment_json.except(:user_id)
+        render json: comment_json, status: 200
+      else
+        render json: {error: @comment.errors}, status: :unprocessable_entity
+      end
+    else
+      render json: {error: @comment.errors}, status: :unprocessable_entity
+    end
   end
 
   def delete
