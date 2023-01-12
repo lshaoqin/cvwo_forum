@@ -59,5 +59,19 @@ class CommentsController < ApplicationController
   end
 
   def delete
+    #First, check if a valid user_id token was supplied
+    begin 
+      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)[0]['id']
+    rescue JWT::VerificationError
+      render json: {errors: "Invalid user token"}
+    end
+    @comment = Comment.find(params[:comment_id])
+    #Check if comment belongs to user
+    if (@comment.user_id != decoded_id)
+      render json: {errors: "User token mismatch - try logging out and in again"}
+    else
+      @comment.destroy
+      render json: {}, status: 200
+    end
   end
 end
