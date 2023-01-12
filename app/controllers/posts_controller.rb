@@ -152,4 +152,22 @@ class PostsController < ApplicationController
       end
     end
   end
+
+  def delete
+     #First, check if a valid user_id token was supplied
+     begin 
+      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)[0]['id']
+    rescue JWT::VerificationError
+      render json: {errors: "Invalid user token - try logging out and in again"}
+    end
+
+    @post = Post.find(params[:post_id])
+    #Check if post belongs to the user
+    if (@post.user_id != decoded_id)
+      render json: {errors: "User token mismatch - try logging out and in again"}
+    else
+      @post.destroy
+      render json: {}, status: 200
+    end
+  end
 end

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   post 'posts/edit', to: 'posts#edit'
   get 'posts/count', to: 'posts#count'
   get 'posts/get_by_id', to: 'posts#get_by_id'
+  post 'posts/delete', to: 'posts#delete'
  
   get '/users', to: 'users#index'
   post '/users/login', to: 'users#login'
