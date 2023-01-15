@@ -1,20 +1,23 @@
 class CommentsController < ApplicationController
   def fetch
-    # Get the post_id from params
-    post_id = params[:post_id]
+    begin
+      # Get the post_id from params
+      post_id = params[:post_id]
 
-    # Query the comments where the post_id matches the given post_id
-    comments = Comment.where(post_id: post_id)
-    processed_comments = comments.map do |comment|
-      # Replace user_id with corresponding author
-      author = comment.user.name
-      comment_json = comment.as_json
-      comment_json['author'] = author
-      comment_json = comment_json.except(:user_id)
-      comment_json
+      # Query the comments where the post_id matches the given post_id
+      comments = Comment.where(post_id: post_id)
+      processed_comments = comments.map do |comment|
+        # Replace user_id with corresponding author
+        author = comment.user.name
+        comment_json = comment.as_json
+        comment_json['author'] = author
+        comment_json = comment_json.except(:user_id)
+        comment_json
+      end
+      render json: processed_comments
+    rescue
+      render json: {errors: "An error occurred while fetching the comments"}, status: :unprocessable_entity
     end
-
-    render json: processed_comments
   end
 
   def new
@@ -51,10 +54,10 @@ class CommentsController < ApplicationController
         comment_json = comment_json.except(:user_id)
         render json: comment_json, status: 200
       else
-        render json: {error: @comment.errors}, status: :unprocessable_entity
+        render json: {error: "An error occurred while updating your comment. Please try again."}, status: :unprocessable_entity
       end
     else
-      render json: {error: @comment.errors}, status: :unprocessable_entity
+      render json: {error: "You may not edit a comment that does not belong to you."}, status: :unprocessable_entity
     end
   end
 

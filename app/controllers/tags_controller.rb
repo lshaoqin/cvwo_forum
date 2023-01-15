@@ -32,7 +32,7 @@ class TagsController < ApplicationController
             end
             render json: @tag, status: :created
         else
-            render json: {errors: @tag.errors}, status: :unprocessable_entity
+            render json: {error: 'An error has occurred. Please try again!'}, status: :unprocessable_entity
         end
     end
 
@@ -49,7 +49,7 @@ class TagsController < ApplicationController
         if current_vote.destroy
             render json:{}, status: 200
         else
-            render json: {errors: current_vote.errors}, status: :unprocessable_entity
+            render json: {error: 'An error has occurred. Please try again!'}, status: :unprocessable_entity
         end
     end
 end

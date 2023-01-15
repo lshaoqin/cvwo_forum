@@ -81,7 +81,7 @@ class PostsController < ApplicationController
           end
           render json: @post, status: 200
       else
-          render json: {errors: post.errors}, status: :unprocessable_entity
+          render json: {errors: "An error may have occurred while saving your post. Please try again!"}, status: :unprocessable_entity
       end
   end
 
@@ -113,7 +113,7 @@ class PostsController < ApplicationController
           end
         end
       rescue
-        render 'Error loading post content', status: :unprocessable_entity
+        render json: {error:'Error loading post content'}, status: :unprocessable_entity
       else
         #Return author name instead of user_id
         author = post.user.name
@@ -148,7 +148,7 @@ class PostsController < ApplicationController
         post_json = post_json.except(:user_id)
         render json: post_json, status: 200
       else
-        render json: {errors: post.errors}, status: :unprocessable_entity
+        render json: {errors: "An error may have occurred while saving your post. Please try again!"}, status: :unprocessable_entity
       end
     end
   end
