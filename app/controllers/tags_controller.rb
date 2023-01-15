@@ -1,6 +1,15 @@
 class TagsController < ApplicationController
     def new
         name = params[:name]
+        #Check for invalid lengths
+        if name.blank?
+            render json: {error: 'Blank tags are not allowed.'}, status: :unprocessable_entity
+            return
+        end
+        if name.length > 16
+            render json: {error: 'Max tag length is 16 characters'}, status: :unprocessable_entity
+            return
+        end
         decoded_id = JWT.decode(params[:token], 
                                 Rails.application.credentials.secret_key, 
                                 true)[0]['id']
