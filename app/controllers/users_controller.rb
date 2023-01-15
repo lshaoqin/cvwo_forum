@@ -4,12 +4,18 @@ class UsersController < ApplicationController
     end
 
     def create 
-        @user = User.create(name: params[:name], password: params[:password])
-        if @user.save
-            login()
-        else
-            render json: {errors: user.errors}, status: :unprocessable_entity
+        begin
+            @user = User.create(name: params[:name], password: params[:password])
+            if @user.save
+                login()
+            else
+                render json: {error: 'An error has occurred.'}, status: :unprocessable_entity
+            end
+        rescue ActiveRecord::RecordNotUnique
+            render json: {error: 'The username is already taken.'}, status: :unprocessable_entity
         end
+
+        
     end
 
     def user_params
