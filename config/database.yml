@@ -81,6 +81,6 @@ test:
 #
 production:
   <<: *default
-  database: TagUp
-  username: TagUp
+  database: tagup
+  username: tagup
   url: <%= ENV['DATABASE_URL'] %>'
