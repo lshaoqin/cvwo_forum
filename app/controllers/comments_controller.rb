@@ -33,7 +33,7 @@ class CommentsController < ApplicationController
         #Pass back updated list of comments to client
         fetch()
     else
-        render json: {errors: comment.errors}, status: :unprocessable_entity
+        render json: {errors: "An error may have occurred while saving your comment. Please try again!"}, status: :unprocessable_entity
     end
   end
 
