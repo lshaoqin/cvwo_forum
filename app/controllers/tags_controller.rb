@@ -11,7 +11,7 @@ class TagsController < ApplicationController
             return
         end
         decoded_id = JWT.decode(params[:token], 
-                                Rails.application.credentials.secret_key, 
+                                ENV['VALIDATION_KEY'], 
                                 true)[0]['id']
         post_id = params[:post_id]
         post = Post.find(post_id)
@@ -39,7 +39,7 @@ class TagsController < ApplicationController
     def revoke
         name = params[:name]
         decoded_id = JWT.decode(params[:token], 
-                                Rails.application.credentials.secret_key, 
+                                ENV['VALIDATION_KEY'], 
                                 true)[0]['id']
         post_id = params[:post_id]
         current_vote = Tag.find_by(name: name, 

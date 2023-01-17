@@ -23,7 +23,7 @@ class CommentsController < ApplicationController
   def new
     #First, check if a valid user_id token was supplied
     begin 
-      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)[0]['id']
+      decoded_id = JWT.decode(params[:token], ENV['VALIDATION_KEY'], true)[0]['id']
     rescue JWT::VerificationError
       render json: {errors: "Invalid user token"}
     end
@@ -40,7 +40,7 @@ class CommentsController < ApplicationController
   def edit
     #First, check if a valid user_id token was supplied
     begin 
-      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)[0]['id']
+      decoded_id = JWT.decode(params[:token], ENV['VALIDATION_KEY'], true)[0]['id']
     rescue JWT::VerificationError
       render json: {errors: "Invalid user token"}
     end
@@ -64,7 +64,7 @@ class CommentsController < ApplicationController
   def delete
     #First, check if a valid user_id token was supplied
     begin 
-      decoded_id = JWT.decode(params[:token], Rails.application.credentials.secret_key, true)[0]['id']
+      decoded_id = JWT.decode(params[:token], ENV['VALIDATION_KEY'], true)[0]['id']
     rescue JWT::VerificationError
       render json: {errors: "Invalid user token"}
     end
