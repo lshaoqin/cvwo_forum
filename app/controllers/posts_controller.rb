@@ -99,7 +99,7 @@ class PostsController < ApplicationController
         tags = post.tags
         #If tag was upvoted/downvoted by user, return user_id as 1. Else, return user_id as 0.
         if (params[:token])
-          decoded_id = JWT.decode(params[:token], ENV['SECRET_KEY_BASE'], true)[0]['id']
+          decoded_id = JWT.decode(params[:token], ENV['VALIDATION_KEY'], true)[0]['id']
           tags.each do |tag|
             if (tag[:user_id] == decoded_id)
               tag[:user_id] = 1
