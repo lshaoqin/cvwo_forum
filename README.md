@@ -1,24 +1,7 @@
-# README
+# CVWO Assignment Project - TagUp
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is the API backend for the forum app TagUp, which was created for [CVWO](https://www.comp.nus.edu.sg/~vwo/) 2022.
 
-Things you may want to cover:
+It was created on [Ruby](https://www.ruby-lang.org/en/) 3.1.2, and uses a [PostgreSQL](https://www.postgresql.org/) database. 
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+To find out more about TagUp, visit the frontend repo [here](https://github.com/lshaoqin/CVWO_frontend).
